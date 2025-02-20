@@ -46,7 +46,7 @@ model Redirection {
   id         String   @id @default(uuid())
   created_at DateTime @default(now())
 
-  redirection_token String @default(uuid())
+  token String @unique @default(uuid())
 
   mission_id         String
   publisher_id       String
@@ -55,17 +55,17 @@ model Redirection {
   MissionApplication MissionApplication[]
 
   // Secondary index on redirection token so we can quickly look up the redirection
-  @@index([redirection_token])
+  @@index([token])
 }
 
 model MissionApplication {
   id         String   @id @default(uuid())
   created_at DateTime @default(now())
 
-  redirection_id String
+  redirection_id String?
   mission_id     String
   publisher_id   String
-  redirection    Redirection @relation(fields: [redirection_id], references: [id])
-  mission        Mission     @relation(fields: [mission_id], references: [id])
-  publisher      Publisher   @relation(fields: [publisher_id], references: [id])
+  redirection    Redirection? @relation(fields: [redirection_id], references: [id])
+  mission        Mission      @relation(fields: [mission_id], references: [id])
+  publisher      Publisher    @relation(fields: [publisher_id], references: [id])
 }

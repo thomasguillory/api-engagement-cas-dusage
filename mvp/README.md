@@ -2,7 +2,15 @@
 
 ## Implémentation
 
-TODO
+Dans ce dossier, vous trouverez le MVP demandé.
+
+- La stack est la même que pour le projet actuel : node, express, typescript, prisma
+- Le modèle Prisma a été réduit au minimum pour ce MVP
+- Pour tester le MVP :
+  - Installer les dépendances : `npm install`
+  - Exécuter le serveur : `npm run dev`
+  - Checker les datas dans la base (la base sqlite est commitée) : `npx prisma studio`
+  - Appeler l'API, par exemple : `curl -XGET http://localhost:3000/r/impression/3d78028b-35e7-4a8d-8b7c-61a3d2af0644/6ff2fa8d-dc31-4cac-a718-9b1de606dd22`
 
 ## Question Bonus
 

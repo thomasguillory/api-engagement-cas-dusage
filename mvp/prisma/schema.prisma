@@ -1,0 +1,71 @@
+// MVP Prisma model
+// This is the Prisma schema file that defines the data model for the MVP
+// We keep it simple for the MVP: models only have the bare mininum fields
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Datasource is SQLite for the MVP, but would be PostgreSQL in production
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Base models: Mission, Publisher
+// No extra fields for the MVP, in reality there would be a lot more details here
+model Mission {
+  id                 String               @id @default(uuid())
+  application_url    String?
+  Impression         Impression[]
+  Redirection        Redirection[]
+  MissionApplication MissionApplication[]
+}
+
+model Publisher {
+  id                 String               @id @default(uuid())
+  Impression         Impression[]
+  Redirection        Redirection[]
+  MissionApplication MissionApplication[]
+}
+
+// Tracking models: Impression, Redirection, MissionApplication, AccountCreation
+model Impression {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+
+  mission_id   String
+  publisher_id String
+  mission      Mission   @relation(fields: [mission_id], references: [id])
+  publisher    Publisher @relation(fields: [publisher_id], references: [id])
+
+  // In complete model here we would track details about the impression, like the user agent, IP address, etc.
+}
+
+model Redirection {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+
+  redirection_token String @default(uuid())
+
+  mission_id         String
+  publisher_id       String
+  mission            Mission              @relation(fields: [mission_id], references: [id])
+  publisher          Publisher            @relation(fields: [publisher_id], references: [id])
+  MissionApplication MissionApplication[]
+
+  // Secondary index on redirection token so we can quickly look up the redirection
+  @@index([redirection_token])
+}
+
+model MissionApplication {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+
+  redirection_id String
+  mission_id     String
+  publisher_id   String
+  redirection    Redirection @relation(fields: [redirection_id], references: [id])
+  mission        Mission     @relation(fields: [mission_id], references: [id])
+  publisher      Publisher   @relation(fields: [publisher_id], references: [id])
+}
